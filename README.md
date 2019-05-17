@@ -1,0 +1,1 @@
+Smart wireless module that shows QR code for connecting to wi-fi.
