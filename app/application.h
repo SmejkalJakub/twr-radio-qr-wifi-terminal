@@ -7,6 +7,12 @@
 
 #include <bcl.h>
 
+void qrcode_project(char *project_name);
+void get_qr_data();
+char get_passwd();
+char get_SSID();
+void bc_change_qr_value(uint64_t *id, const char *topic, void *value, void *param);
+
 
 typedef enum
 {

@@ -2,19 +2,20 @@
 
 #include "qrcodegen.h"
 
+#define BATTERY_UPDATE_INTERVAL (60 * 60 * 1000)
+
+
 // LED instance
 bc_led_t led;
 
+// GFX instance
 bc_gfx_t *gfx;
 
+// LCD buttons instance
 bc_button_t button_left;
 bc_button_t button_right;
 
-void get_qr_data();
-char get_passwd();
-char get_SSID();
-void bc_change_qr_value(uint64_t *id, const char *topic, void *value, void *param);
-
+// QR code variables
 char qr_code[150];
 char ssid[32];
 char password[64];
@@ -25,9 +26,27 @@ static const bc_radio_sub_t subs[] = {
 
 uint32_t display_page_index = 0;
 
-void qrcode_project(char *project_name);
-
 bc_tmp112_t temp;
+
+void battery_event_handler(bc_module_battery_event_t event, void *event_param)
+{
+    (void) event;
+    (void) event_param;
+
+    float voltage;
+    int percentage;
+
+    if (bc_module_battery_get_voltage(&voltage))
+    {
+        bc_radio_pub_battery(&voltage);
+    }
+
+
+    if (bc_module_battery_get_charge_level(&percentage))
+    {
+        bc_radio_pub_string("%d%", percentage);
+    }
+}
 
 void tmp112_event_handler(bc_tmp112_t *self, bc_tmp112_event_t event, void *event_param)
 {
@@ -52,7 +71,6 @@ void bc_change_qr_value(uint64_t *id, const char *topic, void *value, void *para
     get_qr_data();
 
     qrcode_project(qr_code);
-
 
     bc_scheduler_plan_now(500);
 
@@ -217,6 +235,12 @@ void application_init(void)
     bc_module_lcd_init();
     gfx = bc_module_lcd_get_gfx();
     bc_eeprom_read(0, qr_code, sizeof(qr_code));
+
+
+    // Initialze battery module
+    bc_module_battery_init();
+    bc_module_battery_set_event_handler(battery_event_handler, NULL);
+    bc_module_battery_set_update_interval(BATTERY_UPDATE_INTERVAL);
 
     bc_radio_init(BC_RADIO_MODE_NODE_SLEEPING);
     bc_radio_set_rx_timeout_for_sleeping_node(250);
