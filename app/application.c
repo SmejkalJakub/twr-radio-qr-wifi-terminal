@@ -198,9 +198,10 @@ void lcd_page_with_data()
 {
     bc_gfx_clear(gfx);
     bc_gfx_printf(gfx, 0, 0, true, "Connect to our wi-fi:");
-    bc_gfx_printf(gfx, 0, 15, true, "SSID: %s", ssid);
-    bc_gfx_printf(gfx, 0, 35, true, "Password: %s", password);
-    //bc_gfx_printf(gfx, 0, 45, true, "%s", passwd);
+    bc_gfx_printf(gfx, 0, 15, true, "SSID:");
+    bc_gfx_printf(gfx, 0, 25, true, "%s", ssid);
+    bc_gfx_printf(gfx, 0, 45, true, "Password:");
+    bc_gfx_printf(gfx, 0, 55, true, "%s", password);
 
     bc_gfx_update(gfx);
 }
