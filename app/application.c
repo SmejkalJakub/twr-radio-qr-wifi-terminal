@@ -44,7 +44,7 @@ void battery_event_handler(bc_module_battery_event_t event, void *event_param)
 
     if (bc_module_battery_get_charge_level(&percentage))
     {
-        bc_radio_pub_string("%d%", percentage);
+        bc_radio_pub_string("%d", percentage);
     }
 }
 
