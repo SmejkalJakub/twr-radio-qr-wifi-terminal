@@ -149,6 +149,7 @@ char get_passwd()
 
     for(; qr_code[i] != ';'; i++)
     {
+        bc_log_debug("ahoj");
         password[i - start_i] = qr_code[i];
     }
 
@@ -208,9 +209,9 @@ void lcd_page_with_data()
 
 void application_init(void)
 {
-    // Initialize Batery Module
-    bc_module_battery_init();
-
+    bc_radio_init(BC_RADIO_MODE_NODE_SLEEPING);
+    bc_radio_set_subs((bc_radio_sub_t *) subs, sizeof(subs)/sizeof(bc_radio_sub_t));
+    bc_radio_set_rx_timeout_for_sleeping_node(250);
     bc_log_init(BC_LOG_LEVEL_DUMP, BC_LOG_TIMESTAMP_ABS);
 
     // Initialize LED
@@ -229,24 +230,30 @@ void application_init(void)
     // automatically measure the temperature every 15 minutes
     bc_tmp112_set_update_interval(&temp, 15 * 60 * 1000);
     
-    bc_button_set_event_handler(&button_left, button_event_handler, (int*)0);
-    bc_button_set_event_handler(&button_right, button_event_handler, (int*)1);
+
 
     // initialize LCD and load from eeprom
     bc_module_lcd_init();
     gfx = bc_module_lcd_get_gfx();
-    bc_eeprom_read(0, qr_code, sizeof(qr_code));
+    if(bc_eeprom_read(0, qr_code, sizeof(qr_code)))
+    {
+
+    }
+    else 
+    {
+        strncpy(qr_code, "WIFI:S:test;T:test;P:test;;", sizeof(qr_code));
+
+    }
 
 
     // Initialze battery module
     bc_module_battery_init();
     bc_module_battery_set_event_handler(battery_event_handler, NULL);
     bc_module_battery_set_update_interval(BATTERY_UPDATE_INTERVAL);
+    bc_radio_pairing_request("qr-wifi-terminal", VERSION);
 
-    bc_radio_init(BC_RADIO_MODE_NODE_SLEEPING);
-    bc_radio_set_rx_timeout_for_sleeping_node(250);
-    bc_radio_set_subs((bc_radio_sub_t *) subs, sizeof(subs)/sizeof(bc_radio_sub_t));
-    bc_radio_pairing_request("qr-terminal", VERSION);
+    bc_log_debug("I am ok");
+
 }
 
 void application_task(void)
