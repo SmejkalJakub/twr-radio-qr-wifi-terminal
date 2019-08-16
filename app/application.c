@@ -157,13 +157,13 @@ char get_passwd()
     return password;
 }
 
-void button_event_handler(bc_button_t *self, bc_button_event_t event, void *event_param)
+void lcd_event_handler(bc_module_lcd_event_t event, void *event_param)
 { 
-    if(event_param == 0 && event == BC_BUTTON_EVENT_PRESS) 
+    if(event == BC_MODULE_LCD_EVENT_LEFT_CLICK) 
     {
         bc_radio_pub_push_button(0);
     }
-    else if(event_param == 1 && event == BC_BUTTON_EVENT_PRESS) 
+    else if(event == BC_MODULE_LCD_EVENT_RIGHT_CLICK) 
     {
         if(display_page_index == 0)
         {
@@ -217,9 +217,10 @@ void application_init(void)
     // Initialize LED
     bc_led_init(&led, BC_GPIO_LED, false, false);
 
-    const bc_button_driver_t* lcdButtonDriver =  bc_module_lcd_get_button_driver();
-    bc_button_init_virtual(&button_left, 0, lcdButtonDriver, 0);
-    bc_button_init_virtual(&button_right, 1, lcdButtonDriver, 0);
+    bc_module_lcd_init();
+    gfx = bc_module_lcd_get_gfx();
+    bc_module_lcd_set_event_handler(lcd_event_handler, NULL);
+
     
     // initialize TMP112 sensor
     bc_tmp112_init(&temp, BC_I2C_I2C0, BC_TAG_TEMPERATURE_I2C_ADDRESS_ALTERNATE);
@@ -233,17 +234,13 @@ void application_init(void)
 
 
     // initialize LCD and load from eeprom
-    bc_module_lcd_init();
-    gfx = bc_module_lcd_get_gfx();
-    if(bc_eeprom_read(0, qr_code, sizeof(qr_code)))
-    {
+    bc_eeprom_read(0, qr_code, sizeof(qr_code));
 
-    }
-    else 
+    if(strstr(qr_code, "WIFI:S:") == NULL)
     {
         strncpy(qr_code, "WIFI:S:test;T:test;P:test;;", sizeof(qr_code));
-
     }
+
 
 
     // Initialze battery module
