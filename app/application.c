@@ -145,14 +145,12 @@ char get_passwd()
 
 
     int start_i = i;
-    bc_log_debug("pozice pro start: %d", start_i);
 
     for(; qr_code[i] != ';'; i++)
     {
         password[i - start_i] = qr_code[i];
     }
 
-    bc_log_debug("passwd: %s", password);
     return password;
 }
 
@@ -248,8 +246,6 @@ void application_init(void)
     bc_module_battery_set_event_handler(battery_event_handler, NULL);
     bc_module_battery_set_update_interval(BATTERY_UPDATE_INTERVAL);
     bc_radio_pairing_request("qr-terminal", VERSION);
-
-    bc_log_debug("I am ok");
 
 }
 
