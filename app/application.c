@@ -63,7 +63,6 @@ void tmp112_event_handler(bc_tmp112_t *self, bc_tmp112_event_t event, void *even
 
 void bc_change_qr_value(uint64_t *id, const char *topic, void *value, void *param)
 {
-    bc_led_blink(&led, 3);
     int command = (int *) param;
 
     strncpy(qr_code, value, sizeof(qr_code));
@@ -150,7 +149,6 @@ char get_passwd()
 
     for(; qr_code[i] != ';'; i++)
     {
-        bc_log_debug("ahoj");
         password[i - start_i] = qr_code[i];
     }
 
