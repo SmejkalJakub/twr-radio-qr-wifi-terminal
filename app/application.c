@@ -63,6 +63,7 @@ void tmp112_event_handler(bc_tmp112_t *self, bc_tmp112_event_t event, void *even
 
 void bc_change_qr_value(uint64_t *id, const char *topic, void *value, void *param)
 {
+    bc_led_blink(&led, 3);
     int command = (int *) param;
 
     strncpy(qr_code, value, sizeof(qr_code));
@@ -212,6 +213,7 @@ void application_init(void)
     bc_radio_init(BC_RADIO_MODE_NODE_SLEEPING);
     bc_radio_set_subs((bc_radio_sub_t *) subs, sizeof(subs)/sizeof(bc_radio_sub_t));
     bc_radio_set_rx_timeout_for_sleeping_node(250);
+
     bc_log_init(BC_LOG_LEVEL_DUMP, BC_LOG_TIMESTAMP_ABS);
 
     // Initialize LED
@@ -247,7 +249,7 @@ void application_init(void)
     bc_module_battery_init();
     bc_module_battery_set_event_handler(battery_event_handler, NULL);
     bc_module_battery_set_update_interval(BATTERY_UPDATE_INTERVAL);
-    bc_radio_pairing_request("qr-wifi-terminal", VERSION);
+    bc_radio_pairing_request("qr-terminal", VERSION);
 
     bc_log_debug("I am ok");
 
