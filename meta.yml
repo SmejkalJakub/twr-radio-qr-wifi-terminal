@@ -1,0 +1,9 @@
+article: https://www.hackster.io/jakub-smejkal/smart-and-secure-wifi-router-with-bigclown-44fc5e
+video: https://www.youtube.com/watch?v=5fihG2xp4y8
+images:
+  - title:
+    url: https://www.bigclown.com/kits/lcd-thermostat/main.png
+assembly:
+  - name: BigClown Climate Module
+  - name: BigClown Core Module
+  - name: BigClown Mini Battery Module
