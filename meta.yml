@@ -1,5 +1,16 @@
 article: https://www.hackster.io/jakub-smejkal/smart-and-secure-wifi-router-with-bigclown-44fc5e
 video: https://www.youtube.com/watch?v=5fihG2xp4y8
+articles:
+  - title: Wireless QR Code for Guest WiFi
+    url: https://www.hackster.io/154412/wireless-qr-code-for-guest-wifi-6f7159
+    description: Are you tired of placing notes with passwords around your company building and replacing them every time you change password?
+    images:
+      - url: https://hackster.imgix.net/uploads/attachments/886577/qr_thumbnail_(1)_yNNH0vKPua.png?auto=compress%2Cformat&w=900&h=675&fit=min
+  - title: Wireless QR Code for Guest WiFi
+    url: https://www.hackster.io/jakub-smejkal/smart-and-secure-wifi-router-with-bigclown-44fc5e
+    description: Make your own smart router with Turris MOX and BigClown. You can make it change the password periodicaly and show it as a QR code.
+    images:
+      - url: https://hackster.imgix.net/uploads/attachments/955250/_kTTKbCkWtS.uploads%252Ftmp%252Fc4e55ebc-3ca1-4a7d-9caa-2b5aa0c6c740%252Fblob?auto=compress%2Cformat&w=900&h=675&fit=min
 images:
   - title:
     url: https://www.bigclown.com/kits/lcd-thermostat/main.png
