@@ -13,7 +13,7 @@ articles:
       - url: https://hackster.imgix.net/uploads/attachments/1050333/_8PsfZmJVIq.blob?auto=compress%2Cformat&w=900&h=675&fit=min
 images:
   - title:
-    url: https://github.com/hardwario/website/blob/master/static/kits-images/lcd-thermostat/main.png
+    url: https://raw.githubusercontent.com/hardwario/website/master/static/kits-images/lcd-thermostat/main.png
 assembly:
   - name: HARDWARIO Climate Module
   - name: HARDWARIO Core Module
