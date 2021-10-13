@@ -6,29 +6,29 @@
 
 
 // LED instance
-bc_led_t led;
+twr_led_t led;
 
 // GFX instance
-bc_gfx_t *gfx;
+twr_gfx_t *gfx;
 
 // LCD buttons instance
-bc_button_t button_left;
-bc_button_t button_right;
+twr_button_t button_left;
+twr_button_t button_right;
 
 // QR code variables
 char qr_code[150];
 char ssid[32];
 char password[64];
 
-static const bc_radio_sub_t subs[] = {
-    {"qr/-/chng/code", BC_RADIO_SUB_PT_STRING, bc_change_qr_value, (void *) PASSWD}
+static const twr_radio_sub_t subs[] = {
+    {"qr/-/chng/code", TWR_RADIO_SUB_PT_STRING, twr_change_qr_value, (void *) PASSWD}
 };
 
 uint32_t display_page_index = 0;
 
-bc_tmp112_t temp;
+twr_tmp112_t temp;
 
-void battery_event_handler(bc_module_battery_event_t event, void *event_param)
+void battery_event_handler(twr_module_battery_event_t event, void *event_param)
 {
     (void) event;
     (void) event_param;
@@ -36,54 +36,54 @@ void battery_event_handler(bc_module_battery_event_t event, void *event_param)
     float voltage;
     int percentage;
 
-    if (bc_module_battery_get_voltage(&voltage))
+    if (twr_module_battery_get_voltage(&voltage))
     {
-        bc_radio_pub_battery(&voltage);
+        twr_radio_pub_battery(&voltage);
     }
 
 
-    if (bc_module_battery_get_charge_level(&percentage))
+    if (twr_module_battery_get_charge_level(&percentage))
     {
-        bc_radio_pub_string("%d", percentage);
+        twr_radio_pub_string("%d", percentage);
     }
 }
 
-void tmp112_event_handler(bc_tmp112_t *self, bc_tmp112_event_t event, void *event_param)
+void tmp112_event_handler(twr_tmp112_t *self, twr_tmp112_event_t event, void *event_param)
 {
     (void) self;
     (void) event_param;
 
-    if (event == BC_TMP112_EVENT_UPDATE)
+    if (event == TWR_TMP112_EVENT_UPDATE)
     {
         float temperature = 0.0;
-        bc_tmp112_get_temperature_celsius(&temp, &temperature);
-        bc_radio_pub_temperature(BC_RADIO_PUB_CHANNEL_R1_I2C0_ADDRESS_ALTERNATE, &temperature);
+        twr_tmp112_get_temperature_celsius(&temp, &temperature);
+        twr_radio_pub_temperature(TWR_RADIO_PUB_CHANNEL_R1_I2C0_ADDRESS_ALTERNATE, &temperature);
     }
 }
 
-void bc_change_qr_value(uint64_t *id, const char *topic, void *value, void *param)
+void twr_change_qr_value(uint64_t *id, const char *topic, void *value, void *param)
 {
     int command = (int *) param;
 
     strncpy(qr_code, value, sizeof(qr_code));
 
-    bc_eeprom_write(0, qr_code, sizeof(qr_code));
+    twr_eeprom_write(0, qr_code, sizeof(qr_code));
     get_qr_data();
 
     qrcode_project(qr_code);
 
-    bc_scheduler_plan_now(500);
+    twr_scheduler_plan_now(500);
 
 }
 
-static void print_qr(const uint8_t qrcode[]) 
+static void print_qr(const uint8_t qrcode[])
 {
     get_qr_data();
-    bc_gfx_clear(gfx);
+    twr_gfx_clear(gfx);
 
-    bc_gfx_set_font(gfx, &bc_font_ubuntu_13);
-    bc_gfx_draw_string(gfx, 2, 0, "Scan and connect to: ", true);
-    bc_gfx_draw_string(gfx, 2, 10, ssid, true);
+    twr_gfx_set_font(gfx, &twr_font_ubuntu_13);
+    twr_gfx_draw_string(gfx, 2, 0, "Scan and connect to: ", true);
+    twr_gfx_draw_string(gfx, 2, 10, ssid, true);
 
     uint32_t offset_x = 8;
     uint32_t offset_y = 32;
@@ -98,12 +98,12 @@ static void print_qr(const uint8_t qrcode[])
             uint32_t x2 = x1 + box_size;
             uint32_t y2 = y1 + box_size;
 
-            bc_gfx_draw_fill_rectangle(gfx, x1, y1, x2, y2, qrcodegen_getModule(qrcode, x, y));
+            twr_gfx_draw_fill_rectangle(gfx, x1, y1, x2, y2, qrcodegen_getModule(qrcode, x, y));
 		}
 		//fputs("\n", stdout);
 	}
 	//fputs("\n", stdout);
-    bc_gfx_update(gfx);
+    twr_gfx_update(gfx);
 }
 
 void get_qr_data()
@@ -116,7 +116,7 @@ char get_SSID()
 {
     for(int i = 7; qr_code[i] != ';'; i++)
     {
-        ssid[i - 7] = qr_code[i]; 
+        ssid[i - 7] = qr_code[i];
     }
     return ssid;
 
@@ -140,7 +140,7 @@ char get_passwd()
         }
     }
     while(!password_found);
-    
+
     i += 3;
 
 
@@ -154,13 +154,13 @@ char get_passwd()
     return password;
 }
 
-void lcd_event_handler(bc_module_lcd_event_t event, void *event_param)
-{ 
-    if(event == BC_MODULE_LCD_EVENT_LEFT_CLICK) 
+void lcd_event_handler(twr_module_lcd_event_t event, void *event_param)
+{
+    if(event == TWR_MODULE_LCD_EVENT_LEFT_CLICK)
     {
-        bc_radio_pub_push_button(0);
+        twr_radio_pub_push_button(0);
     }
-    else if(event == BC_MODULE_LCD_EVENT_RIGHT_CLICK) 
+    else if(event == TWR_MODULE_LCD_EVENT_RIGHT_CLICK)
     {
         if(display_page_index == 0)
         {
@@ -170,14 +170,14 @@ void lcd_event_handler(bc_module_lcd_event_t event, void *event_param)
         {
             display_page_index--;
         }
-        bc_scheduler_plan_now(0);
+        twr_scheduler_plan_now(0);
     }
 
 }
 
 void qrcode_project(char *text)
 {
-    bc_system_pll_enable();
+    twr_system_pll_enable();
 
 	// Make and print the QR Code symbol
 	uint8_t qrcode[qrcodegen_BUFFER_LEN_MAX];
@@ -189,50 +189,50 @@ void qrcode_project(char *text)
 		print_qr(qrcode);
     }
 
-    bc_system_pll_disable();
+    twr_system_pll_disable();
 }
 
 void lcd_page_with_data()
 {
-    bc_gfx_clear(gfx);
-    bc_gfx_printf(gfx, 0, 0, true, "Connect to our wi-fi:");
-    bc_gfx_printf(gfx, 0, 15, true, "SSID:");
-    bc_gfx_printf(gfx, 0, 25, true, "%s", ssid);
-    bc_gfx_printf(gfx, 0, 45, true, "Password:");
-    bc_gfx_printf(gfx, 0, 55, true, "%s", password);
+    twr_gfx_clear(gfx);
+    twr_gfx_printf(gfx, 0, 0, true, "Connect to our wi-fi:");
+    twr_gfx_printf(gfx, 0, 15, true, "SSID:");
+    twr_gfx_printf(gfx, 0, 25, true, "%s", ssid);
+    twr_gfx_printf(gfx, 0, 45, true, "Password:");
+    twr_gfx_printf(gfx, 0, 55, true, "%s", password);
 
-    bc_gfx_update(gfx);
+    twr_gfx_update(gfx);
 }
 
 void application_init(void)
 {
-    bc_radio_init(BC_RADIO_MODE_NODE_SLEEPING);
-    bc_radio_set_subs((bc_radio_sub_t *) subs, sizeof(subs)/sizeof(bc_radio_sub_t));
-    bc_radio_set_rx_timeout_for_sleeping_node(250);
+    twr_radio_init(TWR_RADIO_MODE_NODE_SLEEPING);
+    twr_radio_set_subs((twr_radio_sub_t *) subs, sizeof(subs)/sizeof(twr_radio_sub_t));
+    twr_radio_set_rx_timeout_for_sleeping_node(250);
 
-    bc_log_init(BC_LOG_LEVEL_DUMP, BC_LOG_TIMESTAMP_ABS);
+    twr_log_init(TWR_LOG_LEVEL_DUMP, TWR_LOG_TIMESTAMP_ABS);
 
     // Initialize LED
-    bc_led_init(&led, BC_GPIO_LED, false, false);
+    twr_led_init(&led, TWR_GPIO_LED, false, false);
 
-    bc_module_lcd_init();
-    gfx = bc_module_lcd_get_gfx();
-    bc_module_lcd_set_event_handler(lcd_event_handler, NULL);
+    twr_module_lcd_init();
+    gfx = twr_module_lcd_get_gfx();
+    twr_module_lcd_set_event_handler(lcd_event_handler, NULL);
 
-    
+
     // initialize TMP112 sensor
-    bc_tmp112_init(&temp, BC_I2C_I2C0, BC_TAG_TEMPERATURE_I2C_ADDRESS_ALTERNATE);
+    twr_tmp112_init(&temp, TWR_I2C_I2C0, TWR_TAG_TEMPERATURE_I2C_ADDRESS_ALTERNATE);
 
     // set measurement handler (call "tmp112_event_handler()" after measurement)
-    bc_tmp112_set_event_handler(&temp, tmp112_event_handler, NULL);
+    twr_tmp112_set_event_handler(&temp, tmp112_event_handler, NULL);
 
     // automatically measure the temperature every 15 minutes
-    bc_tmp112_set_update_interval(&temp, 15 * 60 * 1000);
-    
+    twr_tmp112_set_update_interval(&temp, 15 * 60 * 1000);
+
 
 
     // initialize LCD and load from eeprom
-    bc_eeprom_read(0, qr_code, sizeof(qr_code));
+    twr_eeprom_read(0, qr_code, sizeof(qr_code));
 
     if(strstr(qr_code, "WIFI:S:") == NULL)
     {
@@ -242,10 +242,10 @@ void application_init(void)
 
 
     // Initialze battery module
-    bc_module_battery_init();
-    bc_module_battery_set_event_handler(battery_event_handler, NULL);
-    bc_module_battery_set_update_interval(BATTERY_UPDATE_INTERVAL);
-    bc_radio_pairing_request("qr-terminal", VERSION);
+    twr_module_battery_init();
+    twr_module_battery_set_event_handler(battery_event_handler, NULL);
+    twr_module_battery_set_update_interval(BATTERY_UPDATE_INTERVAL);
+    twr_radio_pairing_request("qr-terminal", VERSION);
 
 }
 
@@ -253,12 +253,12 @@ void application_task(void)
 {
     if(display_page_index == 0)
     {
-        bc_log_debug("calling page 1");
+        twr_log_debug("calling page 1");
         qrcode_project(qr_code);
     }
     else if(display_page_index == 1)
     {
-        bc_log_debug("calling page 2");
+        twr_log_debug("calling page 2");
         lcd_page_with_data();
     }
 }
