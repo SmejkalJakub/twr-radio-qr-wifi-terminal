@@ -2,7 +2,7 @@
 
 # Generator and visualiser of QR codes for easy wifi connectivity
 
-[![Travis](https://img.shields.io/travis/bigclownprojects/bcf-radio-qr-wifi-terminal/master.svg)](https://travis-ci.org/bigclownprojects/bcf-radio-qr-wifi-terminal)
+[![build](https://github.com/hardwario/twr-radio-qr-wifi-terminal/actions/workflows/main.yml/badge.svg)](https://github.com/hardwario/twr-radio-qr-wifi-terminal/actions/workflows/main.yml)
 [![Release](https://img.shields.io/github/release/bigclownprojects/bcf-radio-qr-wifi-terminal.svg)](https://github.com/bigclownprojects/bcf-radio-qr-wifi-terminal/releases)
 [![License](https://img.shields.io/github/license/bigclownprojects/bcf-radio-qr-wifi-terminal.svg)](https://github.com/bigclownprojects/bcf-radio-qr-wifi-terminal/blob/master/LICENSE)
 [![Twitter](https://img.shields.io/twitter/follow/hardwario_en.svg?style=social&label=Follow)](https://twitter.com/hardwario_en)
